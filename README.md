@@ -1,8 +1,6 @@
 
 # Resources
 
-* [Examples](https://github.com/cginternals/cppassist/wiki/examples)
-
 ##### Installation and Development
 
 * [Build form Source](#build-instructions)
@@ -187,7 +185,7 @@ enum class MyEnum : unsigned int {
 };
 
 const auto f = cppassist::makeFlags(MyEnum::Value1) | MyEnum::Value2 & MyEnum::Value3;
-``
+```
 
 
 ## fs
