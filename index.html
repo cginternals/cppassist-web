@@ -1,0 +1,322 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>cppassist</title><link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"><link rel="stylesheet" href="css/bootstrap-4.0.0.min.css"><link rel="stylesheet" href="css/fonts.css"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/highlightjs.min.css"><script src="js/jquery-3.2.1.slim.min.js"></script><script src="js/popper-1.12.9.min.js"></script><script src="js/bootstrap-4.0.0.min.js"></script><script src="js/rx-5.5.6.min.js"></script><script src="js/website.js"></script><script src="js/clipboard.min.js"></script><!-- link(rel = 'stylesheet' href = 'css/template.css')--><!-- script(src = 'js/template.js')--></head><body class="bg-light"><nav class="navbar navbar-expand-md navbar-dark bg-dark"><div class="container"><a class="nav-link px-0" href="https://cginternals.com"><span class="d-none d-md-block"><img class="img-fluid mt-0" src="img/cginternals.svg" alt="cginternals logo"></span><span class="d-block d-md-none"><img class="img-fluid mt-0" src="img/navicon.svg" alt="cginternals icon"></span></a><ul class="navbar-nav ml-auto" id="nav"><li class="nav-item active"><a class="nav-link" href="/">CPPASSIST</a></li><li class="nav-item"><a class="nav-link" href="/docs.html">DOCUMENTATION</a></li><li class="nav-item"><a class="nav-link" href="https://github.com/cginternals/cppassist">GITHUB</a></li></ul></div></nav><section class="container"><header class="jumbatron"><img class="mb-2 w-50 d-none d-md-block" src="img/cppassist-logo.svg" alt="cppassist logo"><img class="mb-2 d-block d-md-none" src="img/cppassist-logo.svg" alt="cppassist logo"><p class="lead">A collection of C++ functions, classes and libraries that are too small to be standalone. It acts like a storage point for useful and reusable code for everyone using C++.</p></header></section><section class="container"><div class="row"><div class="col"><h1>Resources</h1>
+<h5>Installation and Development</h5>
+<ul>
+<li><a href="#build-instructions">Build form Source</a></li>
+<li><a href="#tips-for-linking">Tips for Linking</a></li>
+</ul>
+<h5>Module Introductions</h5>
+<ul>
+<li><a href="#cmdline">cmdline</a></li>
+<li><a href="#flags">flags</a></li>
+<li><a href="#fs">fs</a></li>
+<li><a href="#logging">logging</a></li>
+<li><a href="#memory">memory</a></li>
+<li><a href="#simd">simd</a></li>
+<li><a href="#string">string</a></li>
+<li><a href="#threading">threading</a></li>
+<li><a href="#tokenizer">tokenizer</a></li>
+<li><a href="#typelist">typelist</a></li>
+</ul>
+<h1>Build Instructions</h1>
+<h5>Prerequisites and Dependencies</h5>
+<p>The only mandatory run-time dependencies of <em>cppassist</em> are the STL of the used compiler. Building <em>cppassist</em> from source has several mandatory and optional dependencies:</p>
+<ul>
+<li><a href="https://cmake.org/">CMake</a> 3.0 or higher for building <em>cppassist</em> from source (mandatory for any build from source)</li>
+<li><a href="https://git-scm.com/">git</a> for version control and script supporting tasks</li>
+<li><a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a> 1.8 or higher for generating the documentation on your system
+<ul>
+<li><a href="http://www.graphviz.org/">graphviz</a> for generating diagrams (optional)</li>
+</ul>
+</li>
+</ul>
+<h5>Compile Instructions</h5>
+<p>For compilation, a C++11 compliant compiler, e.g., GCC 4.8, Clang 3.3, MSVC 2013 <strong>Update 3</strong>, is required.
+First, download the source code <a href="https://github.com/cginternals/cppassist/releases">as archive</a> or via git:</p>
+<pre><code class="hljs language-bash">&gt; git <span class="hljs-built_in">clone</span> https://github.com/cginternals/cppassist.git
+&gt; <span class="hljs-built_in">cd</span> cppassist
+</code></pre>
+<p>Then, depending on the version of <em>cppassist</em> you want to build, choose the appropriate tag or branch, e.g., for the 1.0.0 release:</p>
+<pre><code class="hljs language-bash">&gt; git fetch --tags
+&gt; git checkout v1.0.0
+</code></pre>
+<p>The actual compilation can be done using CMake and your favorite compiler and IDE.</p>
+<p>For building <em>cppassist</em> CMake via command line can be used (should work on all systems):</p>
+<p>First, create a build directory (we do not recommend in-source builds):</p>
+<pre><code class="hljs language-bash">&gt; mkdir build
+&gt; <span class="hljs-built_in">cd</span> build
+</code></pre>
+<p>Configure <em>cppassist</em> with your preferred or default generator, e.g., for Visual Studio 2015 in x64 use
+(note: some IDEs have integrated support for CMake projects, e.g., Qt Creator, and allow you to skip the manual project configuration):</p>
+<pre><code class="hljs language-bash">&gt; cmake .. -G <span class="hljs-string">"Visual Studio 14 2015 Win64"</span>
+</code></pre>
+<p>In order to compile the project, either use you favorite Editor/IDE with the created project or use CMake as follows:</p>
+<pre><code class="hljs language-bash">&gt; cmake --build .
+</code></pre>
+<h1>cmdline</h1>
+<p>command line arguments parser for console applications.</p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/cmdline/ArgumentParser.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/cmdline/CommandLineProgram.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/cmdline/CommandLineAction.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/cmdline/CommandLineCommand.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/cmdline/CommandLineOption.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/cmdline/CommandLineSwitch.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/cmdline/CommandLineParameter.h&gt;</span></span>
+
+<span class="hljs-comment">// Declare program</span>
+<span class="hljs-function">CommandLineProgram <span class="hljs-title">program</span><span class="hljs-params">(
+    <span class="hljs-string">"cmdline-example2"</span>,
+    <span class="hljs-string">"cmdline-example2 "</span> CPPASSIST_VERSION,
+    <span class="hljs-string">"cmdline-example2 demonstrates how to parse (complex) command line options using the CommandLineProgram class in cppassist."</span>
+)</span></span>;
+
+<span class="hljs-comment">// Common options</span>
+<span class="hljs-function">CommandLineSwitch <span class="hljs-title">swVerbose</span><span class="hljs-params">(<span class="hljs-string">"--verbose"</span>, <span class="hljs-string">"-v"</span>, <span class="hljs-string">"Make output more verbose"</span>)</span></span>;
+
+<span class="hljs-comment">// Action: 'help'</span>
+<span class="hljs-function">CommandLineAction <span class="hljs-title">actionHelp</span><span class="hljs-params">(<span class="hljs-string">"help"</span>, <span class="hljs-string">"Print help text"</span>)</span></span>;
+program.add(&amp;actionHelp);
+
+actionHelp.add(&amp;swVerbose);
+
+<span class="hljs-function">CommandLineSwitch <span class="hljs-title">swHelp</span><span class="hljs-params">(<span class="hljs-string">"--help"</span>, <span class="hljs-string">"-h"</span>, <span class="hljs-string">"Print help text"</span>, CommandLineSwitch::NonOptional)</span></span>;
+actionHelp.add(&amp;swHelp);
+
+<span class="hljs-function">CommandLineParameter <span class="hljs-title">paramCommand</span><span class="hljs-params">(<span class="hljs-string">"command"</span>, CommandLineParameter::Optional)</span></span>;
+actionHelp.add(&amp;paramCommand);
+
+<span class="hljs-comment">// Action: 'count'</span>
+<span class="hljs-function">CommandLineAction <span class="hljs-title">actionCount</span><span class="hljs-params">(<span class="hljs-string">"count"</span>, <span class="hljs-string">"Count from one number to another"</span>)</span></span>;
+program.add(&amp;actionCount);
+
+actionCount.add(&amp;swVerbose);
+
+<span class="hljs-function">CommandLineCommand <span class="hljs-title">cmdCount</span><span class="hljs-params">(<span class="hljs-string">"count"</span>)</span></span>;
+actionCount.add(&amp;cmdCount);
+
+<span class="hljs-function">CommandLineOption <span class="hljs-title">optStep</span><span class="hljs-params">(<span class="hljs-string">"--increment-by"</span>, <span class="hljs-string">"-i"</span>, <span class="hljs-string">"step"</span>, <span class="hljs-string">"Number that is added per iteration"</span>, CommandLineOption::Optional)</span></span>;
+actionCount.add(&amp;optStep);
+
+<span class="hljs-function">CommandLineParameter <span class="hljs-title">paramFrom</span><span class="hljs-params">(<span class="hljs-string">"from"</span>, CommandLineParameter::NonOptional)</span></span>;
+actionCount.add(&amp;paramFrom);
+
+<span class="hljs-function">CommandLineParameter <span class="hljs-title">paramTo</span><span class="hljs-params">(<span class="hljs-string">"to"</span>, CommandLineParameter::NonOptional)</span></span>;
+actionCount.add(&amp;paramTo);
+
+<span class="hljs-comment">// Action: 'cp'</span>
+<span class="hljs-function">CommandLineAction <span class="hljs-title">actionCopy</span><span class="hljs-params">(<span class="hljs-string">"cp"</span>, <span class="hljs-string">"Copy files"</span>)</span></span>;
+program.add(&amp;actionCopy);
+
+actionCopy.add(&amp;swVerbose);
+
+<span class="hljs-function">CommandLineCommand <span class="hljs-title">cmdCopy</span><span class="hljs-params">(<span class="hljs-string">"cp"</span>)</span></span>;
+actionCopy.add(&amp;cmdCopy);
+
+<span class="hljs-function">CommandLineParameter <span class="hljs-title">paramSrc</span><span class="hljs-params">(<span class="hljs-string">"path"</span>, CommandLineParameter::NonOptional)</span></span>;
+actionCopy.add(&amp;paramSrc);
+
+actionCopy.setOptionalParametersAllowed(<span class="hljs-literal">true</span>);
+actionCopy.setOptionalParameterName(<span class="hljs-string">"path"</span>);
+
+<span class="hljs-comment">// Parse command line</span>
+program.parse(argc, argv);
+
+<span class="hljs-comment">// Check if a valid action has been selected</span>
+<span class="hljs-keyword">if</span> (program.selectedAction() &amp;&amp; !program.hasErrors())
+{
+    <span class="hljs-comment">// Execute 'help'</span>
+    <span class="hljs-keyword">if</span> (program.selectedAction() == &amp;actionHelp)
+    {
+    }
+
+    <span class="hljs-comment">// Execute 'count'</span>
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (program.selectedAction() == &amp;actionCount)
+    {
+    }
+
+    <span class="hljs-comment">// Execute 'cp'</span>
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (program.selectedAction() == &amp;actionCopy)
+    {
+    }
+
+    <span class="hljs-comment">// Exit with success</span>
+    <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+}
+
+<span class="hljs-comment">// Print help</span>
+program.print(program.help(program.selectedAction()));
+</code></pre>
+<h1>flags</h1>
+<p>Flags type to help using enums as flags.</p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/flags/Flags.h&gt;</span></span>
+
+<span class="hljs-keyword">enum</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyEnum</span> :</span> <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> {
+    Value1 = <span class="hljs-number">1</span>,
+    Value2 = <span class="hljs-number">2</span>,
+    Value3 = <span class="hljs-number">4</span>
+};
+
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> f = cppassist::makeFlags(MyEnum::Value1) | MyEnum::Value2 &amp; MyEnum::Value3;
+</code></pre>
+<h1>fs</h1>
+<p>The fs module provides classes to access raw files and their key-value structured header information.</p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/fs/DescriptiveRawFile.h&gt;</span></span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> file = cppassist::DescriptiveRawFile();
+file.load(<span class="hljs-string">"testfile.raw"</span>, <span class="hljs-literal">true</span>);
+
+<span class="hljs-comment">// access raw file contents (starting after header)</span>
+file.data();
+
+<span class="hljs-comment">// access string properties from header</span>
+file.stringProperty(<span class="hljs-string">"author"</span>);
+
+<span class="hljs-comment">// access integer properties from header</span>
+file.intProperty(<span class="hljs-string">"width"</span>);
+
+<span class="hljs-comment">// access floating point properties from header</span>
+file.doubleProperty(<span class="hljs-string">"scaleFactor"</span>);
+</code></pre>
+<h1>logging</h1>
+<p>logging provides stream like logging functionality with customizable outputs (default output is to the console).</p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/logging/logging.h&gt;</span></span>
+
+cppassist::setVerbosityLevel(LogMessage::Debug + <span class="hljs-number">2</span>);
+
+cppassist::critical() &lt;&lt; <span class="hljs-string">"A normal critical message."</span>;
+cppassist::error() &lt;&lt; <span class="hljs-string">"A normal error message."</span>;
+cppassist::warning() &lt;&lt; <span class="hljs-string">"A normal warning message."</span>;
+cppassist::info() &lt;&lt; <span class="hljs-string">"A normal info message."</span>;
+cppassist::debug() &lt;&lt; <span class="hljs-string">"A normal debug message."</span>;
+cppassist::debug(<span class="hljs-number">1</span>) &lt;&lt; <span class="hljs-string">"Another debug message."</span>;
+
+cppassist::info(<span class="hljs-string">"A"</span>) &lt;&lt; <span class="hljs-string">"Info message from context A"</span>;
+cppassist::warning(<span class="hljs-string">"B"</span>) &lt;&lt; <span class="hljs-string">"Warning from context B"</span>;
+cppassist::critical(<span class="hljs-string">"C"</span>) &lt;&lt; <span class="hljs-string">"Critical message from context C"</span>;
+</code></pre>
+<h1>memory</h1>
+<p>Low-level memory management helpers.</p>
+<p><code>make_unique.h</code></p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/memory/make_unique.h&gt;</span></span>
+
+<span class="hljs-keyword">int</span> * value = cppassist::make_unique&lt;<span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">42</span>);
+</code></pre>
+<p><code>offsetof.h</code></p>
+<pre><code class="hljs language-cpp"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Foo</span>
+{</span>
+    <span class="hljs-keyword">int</span> a;
+    <span class="hljs-keyword">int</span> b;
+};
+
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> offset = cppassist::offsetof(&amp;Foo::b);
+</code></pre>
+<h1>simd</h1>
+<p>simd provides structures and algorithms for SIMD-like data processing, as introduced by GPUs.
+This is achieved by compiler extensions as SSE, AVX2, and AVX512.</p>
+<pre><code class="hljs language-cpp">
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/simd/simd.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/simd/vector.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/simd/value.h&gt;</span></span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> valueSize = <span class="hljs-number">512u</span>ll * <span class="hljs-number">512u</span>ll * <span class="hljs-number">512u</span>ll * <span class="hljs-number">2u</span>ll; <span class="hljs-comment">// 1GB of consecutive data</span>
+
+<span class="hljs-function">cppassist::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">float</span>&gt; <span class="hljs-title">values1</span><span class="hljs-params">(valueSize)</span></span>;
+<span class="hljs-function">cppassist::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">float</span>&gt; <span class="hljs-title">values2</span><span class="hljs-params">(valueSize)</span></span>;
+<span class="hljs-built_in">std</span>::fill(values1.valueBegin(), values1.valueEnd(), <span class="hljs-number">2.0f</span>);
+<span class="hljs-built_in">std</span>::fill(values2.valueBegin(), values2.valueEnd(), <span class="hljs-number">4.0f</span>);
+
+<span class="hljs-comment">// Traverse whole vectors and perform the operations using vectorization</span>
+cppassist::traverse([](<span class="hljs-keyword">const</span> cppassist::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">float</span>&gt;::value_type &amp; chunk1, cppassist::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">float</span>&gt;::value_type &amp; chunk2)
+{
+    chunk2 = <span class="hljs-built_in">sqrt</span>((<span class="hljs-built_in">sqrt</span>(chunk1) * <span class="hljs-built_in">sqrt</span>(chunk2) + <span class="hljs-number">12.0f</span>) * <span class="hljs-number">0.125f</span> + <span class="hljs-number">5.0f</span>);
+}, values1, values2);
+</code></pre>
+<h1>string</h1>
+<p>This module provides string utilities like conversion between string and numeric data types, convenience functions for string operations, and some advanced regex functionality (either implemented using Boost or the C++ standard library).</p>
+<p><code>conversion.h</code></p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/string/conversion.h&gt;</span></span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> valueInt = cppassist::<span class="hljs-built_in">string</span>::fromString&lt;<span class="hljs-keyword">int</span>&gt;(<span class="hljs-string">"42"</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> valueBool = cppassist::<span class="hljs-built_in">string</span>::fromString&lt;<span class="hljs-keyword">bool</span>&gt;(<span class="hljs-string">"True"</span>);
+
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> valueString = cppassist::<span class="hljs-built_in">string</span>::toString(<span class="hljs-number">3.14f</span>);
+
+<span class="hljs-comment">// Encode string as UC32</span>
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> valueUC32 = cppassist::<span class="hljs-built_in">string</span>::encode(<span class="hljs-string">"Hello"</span>, cppassist::Encoding::ASCII);
+
+<span class="hljs-comment">//Decode string from UC32</span>
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> valueUTF8 = cppassist::<span class="hljs-built_in">string</span>::decode(valueUC32, cppassist::Encoding::UTF8);
+</code></pre>
+<p><code>manipulation.h</code></p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/string/manipulation.h&gt;</span></span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> commaSeparatedList = cppassist::join({ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>}, <span class="hljs-string">","</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> stringVector = cppassist::split(<span class="hljs-string">"1,2,3,4,5"</span>, <span class="hljs-string">','</span>, <span class="hljs-literal">false</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> trimmedString = cppassist::trim(<span class="hljs-string">"     Hallo     "</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> strippedString = cppassist::stripped(<span class="hljs-string">"1-2-3-4-5-6"</span>, { <span class="hljs-string">'-'</span> });
+</code></pre>
+<p><code>regex.h</code></p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/string/regex.h&gt;</span></span>
+
+<span class="hljs-keyword">if</span> (cppassist::matchesRegex(hexString, <span class="hljs-string">"([0-9A-Fa-f]{8}|[0-9A-Fa-f]{6})"</span>))
+{
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">auto</span> componentList = cppassist::extract(hexString,
+        <span class="hljs-string">"([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})?"</span>);
+}
+</code></pre>
+<h1>threading</h1>
+<p>The module threading provides functions that uses either OpenMP <code>#pragma omp</code> or the <code>std::thread</code> classes to execute a for loop concurrently.</p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/threading/parallelfor.h&gt;</span></span>
+
+<span class="hljs-keyword">bool</span> parallelize = size &gt; <span class="hljs-number">25</span>; <span class="hljs-comment">// use parallel computation if threshold is reached</span>
+
+<span class="hljs-comment">// Beware that start and end are both inclusive</span>
+cppassist::forEach(<span class="hljs-number">0u</span>, size, [<span class="hljs-keyword">this</span>](<span class="hljs-built_in">std</span>::<span class="hljs-keyword">uint32_t</span> number)
+{
+    <span class="hljs-comment">// concurrent calls of this with 0 &lt;= number &lt;= size</span>
+}, parallelize);
+</code></pre>
+<h1>tokenizer</h1>
+<p>Low-level tokenizer as base for more elaborate text parsers.</p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/tokenizer/Tokenizer.h&gt;</span></span>
+
+<span class="hljs-comment">// Create tokenizer for JSON</span>
+cppassist::Tokenizer tokenizer;
+
+tokenizer.setOptions(
+    cppassist::Tokenizer::OptionParseStrings
+    | cppassist::Tokenizer::OptionParseNumber
+    | cppassist::Tokenizer::OptionParseBoolean
+    | cppassist::Tokenizer::OptionParseNull
+    | cppassist::Tokenizer::OptionCStyleComments
+    | cppassist::Tokenizer::OptionCppStyleComments
+);
+
+tokenizer.setQuotationMarks(<span class="hljs-string">"\""</span>);
+tokenizer.setSingleCharacters(<span class="hljs-string">"{}[],:"</span>);
+</code></pre>
+<h1>typelist</h1>
+<p>This module introduces a <code>TypeList</code> type that allows calling different instantiations of a templated method consecutively.</p>
+<pre><code class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cppassist/typelist/TypeList.h&gt;</span></span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TypeListCallback</span>
+{</span>
+<span class="hljs-keyword">public</span>:
+    TypeListCallback();
+
+    <span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">invoke</span><span class="hljs-params">()</span>
+    </span>{
+        <span class="hljs-comment">// gets instantiated and called with each type from SupportedTypes</span>
+    }
+};
+
+<span class="hljs-keyword">using</span> SupportedTypes = cppassist::TypeList&lt;<span class="hljs-keyword">char</span>, <span class="hljs-keyword">int</span>, <span class="hljs-keyword">long</span>, <span class="hljs-keyword">float</span>, <span class="hljs-keyword">double</span>&gt;;
+
+<span class="hljs-comment">// Iterates over all type within type list and call the invoke overload for each type</span>
+SupportedTypes::apply(*<span class="hljs-keyword">this</span>);
+</code></pre>
+</div></div></section><section class="container"><div class="row"><div class="col"><h1>Professional Support</h1>
+<p>CG Internals offers computer graphics R&amp;D as well as reliable technology and innovative concepts to support your computer graphics visions.
+We provide trainings and can help you integrate and customize <em>cpplocate</em> in your next project.</p>
+<p>Visit <a href="https://www.cginternals.com">Professional Support and Services</a> for more details.</p>
+</div></div></section><footer class="text-center" id="footer">Copyright &copy; 2017&thinsp;&ndash;&thinsp;2018  <a href="https://cginternals.com">CG Internals</a><br><small>This type of website is critically endangered: static, self-hosted, single-origin, as well as tracking and cookie-free. <a href="https://cginternals.com/en/privacy-policy.html">Privacy Policy</a></small></footer></body></html>
